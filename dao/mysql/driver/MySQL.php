@@ -2,8 +2,8 @@
 /**
  * MySQL Driver 
  * 注:此驱动自php5.5.0已经废弃,在php7.0.0开始被移除
- * @package  Driver
- * @category Deviers
+ * @package  Dao\Mysql\Driver
+ * @category Driver
  * @author   vcentor
  */
 namespace Dao\Mysql\Driver;

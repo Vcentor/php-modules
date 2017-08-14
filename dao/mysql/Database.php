@@ -1,9 +1,9 @@
 <?php
 /**
  * Register a mysql driver 
- * @package Dao\Mysql\Database
- * @category Base
- * @author vcentor
+ * @package  Dao\Mysql
+ * @category Query
+ * @author   vcentor
  */
 
 namespace Dao\Mysql;
@@ -306,7 +306,7 @@ abstract class Database {
 			$value = str_replace($this->_identifier, $escape_identifier, $value);
 
 			if (strops($value, '.') !== FALSE) {
-				$parts = explode(',', $value);
+				$parts = explode('.', $value);
 
 				foreach ($parts as & $part) {
 					$part = $this->_identifier.$part.$this->_identifier;

@@ -2,7 +2,7 @@
 /**
  * Make query 
  *
- * @package 	DB
+ * @package 	Dao\Mysql
  * @category 	DB
  * @author 		vcentor
  */

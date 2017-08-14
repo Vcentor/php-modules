@@ -2,7 +2,7 @@
 /**
  * builder select query 
  *
- * @package  DB
+ * @package  Dao\Mysql\Db\Query\Builder
  * @category Query
  * @author   vcentor
  */
@@ -187,66 +187,6 @@ class Select extends Where{
 	public function or_having($column, $op, $value = NULL) {
 		$this->_having[] = array('OR' => array($column, $op, $value));
 		return $this;
-	}
-
-	/**
-	 * Alias of and_having_open()
-	 *
-	 * @param 	void
-	 * @return 	$this
-	 */
-	public function having_open() {
-		return $this->and_having_open();
-	}
-
-	/**
-	 * Opens a new "AND HAVING (...)" grouping
-	 *
-	 * @param 	void
-	 * @return 	$this
-	 */
-	public function and_having_open() {
-		$this->_having[] = array('AND' => '(');
-	}
-
-	/**
-	 * Opens a new "OR HAVING (...)" grouping
-	 *
-	 * @param 	void
-	 * @return 	$this
-	 */
-	public function or_having_open() {
-		$this->_having[] = array('OR' => '(');
-	}
-
-	/**
-	 * Alias of and_having_close()
-	 *
-	 * @param 	void
-	 * @return 	$this
-	 */
-	public function having_clse() {
-		return $this->and_having_close();
-	}
-
-	/**
-	 * Close an open "AND HAVING (...)" grouping
-	 *
-	 * @param 	void
-	 * @return 	$this
-	 */
-	public function and_having_close() {
-		$this->_having[] = array('AND' => ')');
-	}
-
-	/**
-	 * Close an open "OR HAVING (...)" grouping
-	 *
-	 * @param 	void
-	 * @return 	$this
-	 */
-	public function or_having_close() {
-		$this->_having[] = array('OR' => ')');
 	}
 
 	/**

@@ -3,7 +3,7 @@
  * Register a mysql driver 
  * @package Dao\Mysql\Database
  * @category Base
- * @author xieshuai
+ * @author vcentor
  */
 
 namespace Dao\Mysql;

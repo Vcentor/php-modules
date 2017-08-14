@@ -2,7 +2,7 @@
 /**
  * @package Exception
  * @category Exception
- * @author xieshuai
+ * @author vcentor
  */
 
 namespace Dao\Mysql\Exception;

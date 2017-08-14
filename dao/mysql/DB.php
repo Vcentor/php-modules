@@ -4,7 +4,7 @@
  *
  * @package 	DB
  * @category 	DB
- * @author 		xieshuai
+ * @author 		vcentor
  */
 
 namespace Dao\Mysql;

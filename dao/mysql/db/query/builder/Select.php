@@ -4,7 +4,7 @@
  *
  * @package  DB
  * @category Query
- * @author   xieshuai
+ * @author   vcentor
  */
 
 namespace Dao\Mysql\Db\Query\Builder;

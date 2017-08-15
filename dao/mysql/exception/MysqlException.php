@@ -19,4 +19,7 @@ class MysqlException extends Exception {
 	const INSERT_INTO_ERR 	= 50003;
 	// JOIN Exception
 	const JOIN_ERR			= 50004;
+
+	// PDO Exception
+	const PDO_ERR			= 50005;
 }

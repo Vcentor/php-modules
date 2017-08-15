@@ -67,7 +67,7 @@ class MySQL extends Database {
 		}
 	}
 
-	public function query($type, $sql, $as_object = FALSE, array $params = NULL) {
+	public function query($type, $sql, $as_object = FALSE) {
 		// Make sure the database is connected
 		$this->_connection OR $this->connect();
 
@@ -85,8 +85,22 @@ class MySQL extends Database {
 		}
 
 		if ($type === Database::SELECT) {
-			// Return an iterator of results
-			return new Result($result, $sql, $as_object, $params);
+			$ret = array();
+			if ($as_object === TRUE) {
+				while ($rows = mysql_fetch_object($result)) {
+					$ret[] = $rows
+				}
+			} elseif (is_string($as_object)) {
+				while ($rows = mysql_fetch_object($result, $as_object)) {
+					$ret[] = $rows
+				}
+			} else {
+				while ( $rows = mysql_fetch_assoc($result)) {
+					$rows[] = $rows;
+				}
+			}
+
+			return $ret;
 		} elseif ($type === Database::INSERT) {
 			// Return an list of insert id and rows created
 			return array(
@@ -196,5 +210,21 @@ class MySQL extends Database {
 		if ($status === FALSE) {
 			throw new MysqlException(mysql_error($this->_connection), mysql_errno($this->_connection));
 		}
+	}
+
+	public function disconnect() {
+		try {
+			$status = TRUE;
+			if (is_resource($this->_connection)) {
+				if ($status = mysql_close($this->_connection)) {
+					$this->_connection = NULL;
+					parent::disconnect();
+				}
+			}
+		} catch (Exception $e) {
+			$status = ! is_resource($this->_connection)
+		}
+
+		return $status;
 	}
 }

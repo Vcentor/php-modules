@@ -121,7 +121,7 @@ abstract class Database {
 	 * @return boolean
 	 */
 	public function disconnect() {
-		unset(Database::$instances[$this->_instance]);
+		unset(self::$instances[$this->_instance]);
 
 		return TRUE;
 	}

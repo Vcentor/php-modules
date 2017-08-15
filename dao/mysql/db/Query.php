@@ -20,13 +20,7 @@ class Query {
 
 	// Quoted query parameters
 	protected $_parameters;
-
-	// Return results as associative arrays or objects
-	protected $_as_object = FALSE;
-
-	// Parameters for __construct when using object results
-	protected $_object_params = array();
-
+	
 	/**
 	 * Create a new SQL query of the specified type.
 	 *
@@ -82,5 +76,66 @@ class Query {
 		}
 
 		return $sql;
+	}
+
+	/**
+	 * Set the value of a parameter in the query.
+	 *
+	 * @param 	string 	$param 	parameter key to replace
+	 * @param 	mixed 	$value	value to use
+	 * @param 	$this
+	 */
+	public function param($param, $value) {
+		$this->_parameters[$param] = $value;
+		return $this;
+	}
+
+	/**
+	 * Bind a variable to a parameters in the query.
+	 *
+	 * @param 	string 	$param 	parameter key to replace
+	 * @param 	mixed 	$var 	variable to use
+	 * @return 	$this
+	 */
+	public function bind($param, & $var) {
+		$this->_parameters[$param] = $var;
+		return $this;
+	}
+
+	/**
+	 * Add multiple parameters to the query.
+	 *
+	 * @param 	array 	$params 	list of parameters
+	 * @return 	$this
+	 */
+	public function parameters(array $params) {
+		$this->_parameters = $params + $this->_parameters;
+		return $this;
+	}
+
+	/**
+	 * Execute the current query on the given database.
+	 *
+	 * @param 	mixed 	$db 			Database instance or name of instance
+	 * @param 	string 	$as_bject 		result object class name, TRUE for stdClass or FALSE for array
+	 * @return 	mixed 	object or array
+	 * @return 	mixed 	the insert id for INSERT queries
+	 * @return 	integer  number of affected rows for all other queries
+	 */
+	public function execute($db = NULL, $as_object = FALSE) {
+
+		if ( ! is_object($db)) {
+			$db = Database::instance($db);
+		}
+
+		if ($as_assoc === NULL) {
+			$as_assoc = $this->_as_object;
+		}
+
+		$sql = $this->compile($db);
+
+		$result = $db->query($this->_type, $sql, $as_object);
+
+		return $result;
 	}
 }

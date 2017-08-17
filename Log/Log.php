@@ -212,11 +212,7 @@ class Log {
 
 		foreach ($this->_messages as $level => $message) {
 
-			if ( ! isset(self::$_arrLogLevels[$level])) {
-				return;
-			}
-
-			if ($level > $this->_level) {
+			if (! isset(self::$_arrLogLevels[$level]) OR $level > $this->_level) {
 				continue;
 			}
 

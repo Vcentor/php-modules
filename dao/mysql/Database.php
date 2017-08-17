@@ -8,9 +8,6 @@
 
 namespace Dao\Mysql;
 use Dao\Mysql\Exception\MysqlException;
-use Dao\Mysql\Driver\MySQL as Mysql;
-use Dao\Mysql\Driver\MySQLi as Mysqli;
-use Dao\Mysql\Driver\PDO as Pdo;
 use Dao\Mysql\Db\Query\Expression;
 use Dao\Mysql\Db\Query;
 
@@ -51,7 +48,7 @@ abstract class Database {
 	 * @param void
 	 * @return void
 	 */
-	public function __consruct($name, array $config) {
+	public function __construct($name, array $config) {
 		$this->_instance = $name;
 		$this->_config = $config;
 
@@ -64,17 +61,35 @@ abstract class Database {
 	 * Get a singleton Database instance.
 	 *
 	 * @param 	string $name    instance name
-	 * @param 	array  $config  configuration parameters  
 	 * @return  Database
 	 */
-	public static function instance($name = NULL, array $config) {
+	public static function instance($name = NULL) {
+
+		// load from config file
+		$config = array(
+		    'default' => array(  
+		        'type'       => 'MySQL',  
+		        'connection' => array(  
+		            'hostname'   => '127.0.0.1:3306',
+		            'database'   => 'test', 
+		            'username'   => 'root',//  
+		            'password'   => '',//  
+		            'persistent' => FALSE,
+		        ),  
+		        'table_prefix' => '',  
+		        'charset'      => 'utf8', 
+		    ),
+		);
+
 		if ($name === NULL) {
 			$name = self::$name;
 		}
-		if (!isset(self::$instances[$name])) {
-			if (empty($config)) {
-				throw new MysqlException("The config cannot be empty!", MysqlException::INVALID_PARAM);
+		if ( ! isset(self::$instances[$name])) {
+
+			if ( ! isset($config[$name])) {
+				throw new MysqlException("Config name $name not find!", MysqlException::INVALID_PARAM);
 			}
+
 			$config = $config[$name];
 
 			if (empty($config['type'])) {
@@ -82,7 +97,11 @@ abstract class Database {
 			}
 
 			// Set the driver class name
-			$driver = ucfirst($config['type']);
+			$driver = 'Dao\\Mysql\\Driver\\'.ucfirst($config['type']);
+
+			if ( ! class_exists($driver)) {
+				throw new MysqlException("Class name {$config['type']} isnot exists!", MysqlException::INVALID_PARAM);
+			}
 
 			// Create the database connection instance
 			$driver = new $driver($name, $config);
@@ -167,8 +186,8 @@ abstract class Database {
 		} elseif (is_float($value)) {
 			return sprintf('%F', $value);
 		}
-
-		$this->escape($value);
+		
+		return $this->escape($value);
 	}
 
 	/**
@@ -357,12 +376,11 @@ abstract class Database {
 	 * @param 	integer $type 			Database::SELECT, Database::INSERT, etc
 	 * @param 	string  $sql  			SQL query
 	 * @param 	mix     $_as_object  	result object class string, TRUE for stdClass, FALSE for assoc array
-	 * @param 	array   $params 		object construct parameters for result class
 	 * @return 	object  Database_Result for SELECT queries
 	 * @return  array   list (insert id, row count) for INSERT queries
 	 * @return  integer number of affected rows for all other queries
 	 */
-	abstract public function query($type, $sql, $_as_object = FALSE, array $params);
+	abstract public function query($type, $sql, $_as_object = FALSE);
 
 
 	/**

@@ -71,32 +71,27 @@ class MySQL extends Database {
 		// Make sure the database is connected
 		$this->_connection OR $this->connect();
 
-
 		// Set the last query
 		$this->last_query = $sql;
-
+var_dump($sql);
 		if ( ! empty($this->_config['connection']['persistent']) AND $this->_config['connection']['database'] !== self::$_current_database[$this->_connection_id]) {
 			$this->_select_db($this->_config['connection']['database']);
 		}
 
 		// Execute the query
 		if (($result = mysql_query($sql, $this->_connection)) === FALSE) {
-			throw new Exception(mysql_error($this->_connection), mysql_errno($this->_connection));
+			throw new MysqlException(mysql_error($this->_connection), mysql_errno($this->_connection));
 		}
 
 		if ($type === Database::SELECT) {
 			$ret = array();
 			if ($as_object === TRUE) {
 				while ($rows = mysql_fetch_object($result)) {
-					$ret[] = $rows
-				}
-			} elseif (is_string($as_object)) {
-				while ($rows = mysql_fetch_object($result, $as_object)) {
-					$ret[] = $rows
+					$ret[] = $rows;
 				}
 			} else {
 				while ( $rows = mysql_fetch_assoc($result)) {
-					$rows[] = $rows;
+					$ret[] = $rows;
 				}
 			}
 
@@ -222,7 +217,7 @@ class MySQL extends Database {
 				}
 			}
 		} catch (Exception $e) {
-			$status = ! is_resource($this->_connection)
+			$status = ! is_resource($this->_connection);
 		}
 
 		return $status;

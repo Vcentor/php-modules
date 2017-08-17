@@ -150,7 +150,7 @@ class Insert extends Builder {
 
 	public function reset() {
 		$this->_table 		=
-		$this->_sql			= NULL
+		$this->_sql			= NULL;
 
 		$this->_columns 	=
 		$this->_values 		= 

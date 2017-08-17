@@ -239,7 +239,7 @@ class Select extends Where{
 		// Start a selection query
 		$query = 'SELECT ';
 
-		if ($this->distinct === TRUE) {
+		if ($this->_distinct === TRUE) {
 			$query .= 'DISTINCT ';
 		}
 
@@ -250,7 +250,7 @@ class Select extends Where{
 		}
 
 		if ( ! empty($this->_from)) {
-			$query .= ' FROM' . implode(', ', array_unique(array_map($quote_table, $this->_from)));
+			$query .= ' FROM ' . implode(', ', array_unique(array_map($quote_table, $this->_from)));
 		}
 
 		if ( ! empty($this->_join)) {
@@ -258,7 +258,7 @@ class Select extends Where{
 		}
 
 		if ( ! empty($this->_where)) {
-			$query .= ' WHERE'.$this->_compile_conditions($db, $this->_where);
+			$query .= ' WHERE '.$this->_compile_conditions($db, $this->_where);
 		}
 
 		if ( ! empty($this->_group_by)) {
@@ -266,7 +266,7 @@ class Select extends Where{
 		}
 
 		if ( ! empty($this->_having)) {
-			$query .= ' HAVING'.$this->_compile_conditions($db, $this->_having);
+			$query .= ' HAVING '.$this->_compile_conditions($db, $this->_having);
 		}
 
 		if ( ! empty($this->_order_by)) {
@@ -274,11 +274,11 @@ class Select extends Where{
 		}
 
 		if ($this->_limit !== NULL) {
-			$query .= ' LIMIT'.$this->_limit;
+			$query .= ' LIMIT '.$this->_limit;
 		}
 
 		if ($this->_offset !== NULL) {
-			$query .= ' OFFSET'.$this->_offset;
+			$query .= ' OFFSET '.$this->_offset;
 		}
 
 		if ( ! empty($this->_union)) {

@@ -28,7 +28,7 @@ class DB {
 	 * @param 	string 		$sql
 	 * @return 	Database
 	 */
-	public function query($type, $sql) {
+	public static function query($type, $sql) {
 		return new Query($type, $sql);
 	}
 
@@ -44,7 +44,7 @@ class DB {
 	 * @param 	mixed 	$columns
 	 * @return 	Select
 	 */
-	public function select($columns = NULL) {
+	public static function select($columns = NULL) {
 		return new Select(func_get_args());
 	}
 
@@ -57,7 +57,7 @@ class DB {
 	 * @param  array $columns
 	 * @return Select
 	 */
-	public function select_array(array $columns = NULL) {
+	public static function select_array(array $columns = NULL) {
 		return new Select($columns);
 	}
 
@@ -70,7 +70,7 @@ class DB {
 	 * @param 	array 	$columns
 	 * @return 	Insert
 	 */
-	public function insert($table = NULL, array $columns = NULL) {
+	public static function insert($table = NULL, array $columns = NULL) {
 		return new Insert($table, $columns);
 	}
 
@@ -82,7 +82,7 @@ class DB {
 	 * @param 	string 	$table
 	 * @return 	Update
 	 */
-	public function update($table = NULL) {
+	public static function update($table = NULL) {
 		return new Update($table);
 	}
 
@@ -94,7 +94,7 @@ class DB {
 	 * @param 	string 	$table
 	 * @return 	Delete
 	 */
-	public function delete($table = NULL) {
+	public static function delete($table = NULL) {
 		return new Delete($table);
 	}
 
@@ -108,7 +108,7 @@ class DB {
 	 * @param 	array 	$parameters
 	 * @return Expression
 	 */
-	public function expr($string, array $parameters = NULL) {
+	public static function expr($string, array $parameters = NULL) {
 		return new Expression($string, $parameters);
 	} 
 }

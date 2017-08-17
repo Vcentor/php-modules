@@ -19,7 +19,7 @@ class Query {
 	protected $_sql;
 
 	// Quoted query parameters
-	protected $_parameters;
+	protected $_parameters = array();
 	
 	/**
 	 * Create a new SQL query of the specified type.
@@ -30,7 +30,7 @@ class Query {
 	 */
 	public function __construct($type, $sql) {
 		$this->_type = $type;
-		$this->_sql = $sql
+		$this->_sql = $sql;
 	}
 
 	/**
@@ -128,8 +128,8 @@ class Query {
 			$db = Database::instance($db);
 		}
 
-		if ($as_assoc === NULL) {
-			$as_assoc = $this->_as_object;
+		if ($as_object === NULL) {
+			$as_object = $this->_as_object;
 		}
 
 		$sql = $this->compile($db);

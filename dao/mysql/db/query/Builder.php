@@ -41,51 +41,54 @@ abstract class Builder extends Query {
 	protected function _compile_conditions(Database $db, array $conditions) {
 
 		$sql = '';
-		foreach ($conditions as $logic => $condition) {
+		foreach ($conditions as $group) {
+			// Process groups of conditions
+			foreach ($group as $logic => $condition) {
 
-			if ( ! empty($sql)) {
-				$sql .= ' '.$logic.' ';
-			}
-
-			list($column, $op, $value) = $condition;
-
-			if ($value === NULL) {
-				if ($op === '=') {
-					$op = 'IS';
-				} elseif ($op === '!=' OR $op === '<>') {
-					$op = 'IS NOT';
-				}
-			}
-
-			$op = strtoupper($op);
-
-			if (($op === 'BETWEEN' OR $op === 'NOT BETWEEN') AND is_array($value)) {
-				list($min, $max) = $value;
-
-				if ((is_string($min) AND array_key_exists($min, $this->_parameters)) === FALSE){
-					$min = $db->quote($min);
+				if ( ! empty($sql)) {
+					$sql .= ' '.$logic.' ';
 				}
 
-				if ((is_string($max) AND array_key_exists($max, $this->_parameters)) === FALSE) {
-					$max = $db->quote($max);
+				list($column, $op, $value) = $condition;
+
+				if ($value === NULL) {
+					if ($op === '=') {
+						$op = 'IS';
+					} elseif ($op === '!=' OR $op === '<>') {
+						$op = 'IS NOT';
+					}
 				}
 
-				$value = $min.'AND'.$max;
-			} elseif ((is_string($value) AND array_key_exists($value, $this->parameters)) === FALSE) {
-				$value = $db->quote($value);
-			}
+				$op = strtoupper($op);
 
-			if ($column) {
-				if (is_array($column)) {
-					$column = $db->quote_identifier(reset($column));
-				} else {
-					$column = $db->quote_column($column);
+				if (($op === 'BETWEEN' OR $op === 'NOT BETWEEN') AND is_array($value)) {
+					list($min, $max) = $value;
+
+					if ((is_string($min) AND array_key_exists($min, $this->_parameters)) === FALSE){
+						$min = $db->quote($min);
+					}
+
+					if ((is_string($max) AND array_key_exists($max, $this->_parameters)) === FALSE) {
+						$max = $db->quote($max);
+					}
+
+					$value = $min.'AND'.$max;
+				} elseif ((is_string($value) AND array_key_exists($value, $this->_parameters)) === FALSE) {
+					$value = $db->quote($value);
 				}
+
+				if ($column) {
+					if (is_array($column)) {
+						$column = $db->quote_identifier(reset($column));
+					} else {
+						$column = $db->quote_column($column);
+					}
+				}
+				$sql .= '(';
+				$sql .= trim($column.' '.$op.' '.$value);
+				$sql .= ')';
+				
 			}
-			$sql .= '(';
-			$sql .= trim($column.' '.$op.' '.$value);
-			$sql .= ')';
-			
 		}
 
 		return $sql;

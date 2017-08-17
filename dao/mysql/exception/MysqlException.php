@@ -6,6 +6,7 @@
  */
 
 namespace Dao\Mysql\Exception;
+use Exception;
 
 class MysqlException extends Exception {
 

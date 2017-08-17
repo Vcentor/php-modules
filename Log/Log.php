@@ -98,9 +98,10 @@ class Log {
 	 * GET COMMON LOG INFO
 	 *
 	 * @param 	string 	$message
+	 * @param 	string 	$type
 	 * @return 	string
 	 */
-	protected function _log_info(string $message) {
+	protected function _log_info(string $message, string $type) {
 		$request_ip = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : NULL;
 		$request_uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : NULL;
 		$referer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : NULL;
@@ -112,6 +113,7 @@ class Log {
 		$method = isset($trace[0]['function']) ? $trace[0]['function'] : NULL;
 
 		$log_info  = '['.date('Y-m-d H:i:s').']';
+		$log_info .= '[type='.$type.']';
 		$log_info .= '[request_ip= '.$request_ip.']';
 		$log_info .= '[request_uri= '.$request_uri.']';
 		$log_info .= '[referer= '.$referer.']';
@@ -148,7 +150,7 @@ class Log {
 	 * @return 	void
 	 */
 	public static function debug(string $message) {
-		$log_info = self::instance()->_log_info($message);
+		$log_info = self::instance()->_log_info($message, __FUNCTION__);
 		self::instance()->_messages[self::LOG_LEVEL_DEBUG][] = $log_info;
 	}
 
@@ -159,7 +161,7 @@ class Log {
 	 * @return 	void
 	 */
 	public static function notice(string $message) {
-		$log_info = self::instance()->_log_info($message);
+		$log_info = self::instance()->_log_info($message, __FUNCTION__);
 		self::instance()->_messages[self::LOG_LEVEL_notice][] = $log_info;
 	}
 
@@ -170,7 +172,7 @@ class Log {
 	 * @return 	void
 	 */
 	public static function warning(string $message) {
-		$log_info = self::instance()->_log_info($message);
+		$log_info = self::instance()->_log_info($message, __FUNCTION__);
 		self::instance()->_messages[self::LOG_LEVEL_WARNING][] = $log_info;
 	}
 
@@ -181,7 +183,7 @@ class Log {
 	 * @return 	void
 	 */
 	public static function trace(string $message) {
-		$log_info = self::instance()->_log_info($message);
+		$log_info = self::instance()->_log_info($message, __FUNCTION__);
 		self::instance()->_messages[self::LOG_LEVEL_TRACE][] = $log_info;
 	}
 
@@ -192,7 +194,7 @@ class Log {
 	 * @return 	void
 	 */
 	public static function fatal(string $message) {
-		$log_info = self::instance()->_log_info($message);
+		$log_info = self::instance()->_log_info($message, __FUNCTION__);
 		self::instance()->_messages[self::LOG_LEVEL_FATAL][] = $log_info;
 	}
 
@@ -210,11 +212,19 @@ class Log {
 
 		foreach ($this->_messages as $level => $message) {
 
+			if ( ! isset(self::$_arrLogLevels[$level])) {
+				return;
+			}
+
 			if ($level > $this->_level) {
 				continue;
 			}
 
-			$filename = $this->_directory.DIRECTORY_SEPARATOR.date('YmdH').'.'.self::$_arrLogLevels[$level].'.log';
+			if ($level === self::LOG_LEVEL_FATAL OR $level === self::LOG_LEVEL_WARNING) {
+				$filename = $this->_directory.DIRECTORY_SEPARATOR.date('YmdH').'.wf.log';
+			} else {
+				$filename = $this->_directory.DIRECTORY_SEPARATOR.date('YmdH').'.new.log';
+			}
 
 			if ( ! file_exists($filename)) {
 				// create a log file

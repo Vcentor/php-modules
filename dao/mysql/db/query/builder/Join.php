@@ -9,7 +9,7 @@
 
 namespace Dao\Mysql\Db\Query\Builder;
 use Dao\Mysql\Db\Query\Builder;
-use Dao\Mysql\Database\;
+use Dao\Mysql\Database;
 use Dao\Mysql\Exception\MysqlException;
 
 class Join extends Builder {
@@ -103,7 +103,7 @@ class Join extends Builder {
 		} else {
 			$conditions = array();
 			foreach ($this->_on as $condition) {
-				list($c2, $op, $c2) = $condition;
+				list($c1, $op, $c2) = $condition;
 
 				if ($op) {
 					$op = ' '.strtoupper($op);

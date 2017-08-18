@@ -8,6 +8,7 @@
  */
 
 namespace Dao\Mysql\Driver;
+use PDO as PDODriver;
 use Dao\Mysql\Database;
 use Dao\Exception\MysqlException;
 
@@ -26,20 +27,20 @@ class PDO extends Database {
 			'username'		=> 	NULL,
 			'password'		=> 	NULL,
 			'persistent'	=> 	FALSE,
-		))
+		));
 
 		unset($this->_config['connection']);
 
 		// Force PDO to use exceptions for all errors
-		$options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
+		$options[PDODriver::ATTR_ERRMODE] = PDODriver::ERRMODE_EXCEPTION;
 
 		if ( ! empty($persistent)) {
 			// Make the connection persistent
-			$options[PDO::ATTR_PERSISTENT] = TRUE;
+			$options[PDODriver::ATTR_PERSISTENT] = TRUE;
 		}
 
 		try {
-			$this->_connection = new PDO($dsn, $username, $password, $options);
+			$this->_connection = new PDODriver($dsn, $username, $password, $options);
 		} catch (PDOException $e) {
 			throw new MysqlException($e->getMessage(), $e->getCode());
 		}
@@ -61,8 +62,8 @@ class PDO extends Database {
 		parent::disconnect();
 	}
 
-	public function query($type, $sql, $as_object = FALSE) {
-		$this->_connection OR $this->connect()
+	public function query($type, $sql, $as_one = FALSE) {
+		$this->_connection OR $this->connect();
 
 		try {
 			$result = $this->_connection->query($sql);
@@ -73,21 +74,18 @@ class PDO extends Database {
 		$this->last_query = $sql;
 
 		if ($type === Database::SELECT) {
-			if ($as_object === TRUE) {
-				$result->setFetchMode(PDO::FETCH_CLASS, 'stdClass');
-			} elseif (is_string($as_object)) {
-				$result->setFetchMode(PDO::FETCH_CLASS, $as_object);
-			} else {
-				$result->setFetchMode(PDO::FETCH_ASSOC);
+
+			$result->setFetchMode(PDODriver::FETCH_ASSOC);
+
+			if ($as_one) {
+				return $result->fetch();
 			}
+			return $result->fetchAll();
 
-			$result = $result->fetch_all();
-
-			return $result;
 		} elseif ($type === Database::INSERT) {
 			return array(
-				'insert_id' 	=> $this->_connection->lastInsertId();
-				'affected_rows'	=> $result->rowCount();
+				'insert_id' 	=> $this->_connection->lastInsertId(),
+				'affected_rows'	=> $result->rowCount(),
 			);
 		} else {
 			return $result->rowCount();
@@ -114,16 +112,36 @@ class PDO extends Database {
 	}
 
 	public function list_tables($like = NULL) {
-		throw new MysqlException('Database method list_tables is not supported by PDO', MysqlException::PDO_ERR);
+		if (is_string($like)) {
+			$result = $this->query(Database::SELECT, 'SHOW TABLES LIKE '.$this->quote($like));
+		} else {
+			$result = $this->query(Database::SELECT, 'SHOW TABLES');
+		}
+
+		$tables = array();
+
+		foreach ($result as $row) {
+			$tables[] = reset($row);
+		}
+
+		return $tables;
 	}
 
 	public function list_columns($table, $like = NULL, $add_prefix = TRUE) {
-		throw new MysqlException('Database method list_columns is not supported by PDO', MysqlException::PDO_ERR);
+		$table = ($add_prefix === TRUE) ? $this->quote_table($table) : NULL;
+
+		if (is_string($like)) {
+			$result = $this->query(Database::SELECT, 'SHOW FULL COLUMNS FROM '.$table.' LIKE '.$this->quote($like));
+		} else {
+			$result = $this->query(Database::SELECT, 'SHOW FULL COLUMNS FROM '.$table);
+		}
+
+		return $result;
 	}
 
 	public function escape($value) {
 		$this->_connection OR $this->connect();
 
-		$this->_connection->quote($value);
+		return $this->_connection->quote($value);
 	}
 }

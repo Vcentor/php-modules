@@ -116,13 +116,13 @@ class Query {
 	/**
 	 * Execute the current query on the given database.
 	 *
-	 * @param 	mixed 	$db 			Database instance or name of instance
-	 * @param 	string 	$as_bject 		result object class name, TRUE for stdClass or FALSE for array
-	 * @return 	mixed 	object or array
-	 * @return 	mixed 	the insert id for INSERT queries
-	 * @return 	integer  number of affected rows for all other queries
+	 * @param 	boolean 	$as_one 		select result ONE or ALL default ALL
+	 * @param 	mixed 		$db 			Database instance or name of instance
+	 * @return 	array 		select result
+	 * @return 	mixed 		the insert id for INSERT queries
+	 * @return 	integer  	number of affected rows for all other queries
 	 */
-	public function execute($db = NULL, $as_object = FALSE) {
+	public function execute($as_one = FALSE, $db = NULL) {
 
 		if ( ! is_object($db)) {
 			$db = Database::instance($db);
@@ -134,7 +134,7 @@ class Query {
 
 		$sql = $this->compile($db);
 
-		$result = $db->query($this->_type, $sql, $as_object);
+		$result = $db->query($this->_type, $sql, $as_one);
 
 		return $result;
 	}

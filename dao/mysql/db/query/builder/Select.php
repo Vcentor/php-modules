@@ -123,7 +123,7 @@ class Select extends Where{
 	 * @return 	$this
 	 */
 	public function on($c1, $op, $c2) {
-		$this->_last_join->on($c2, $op, $c2);
+		$this->_last_join->on($c1, $op, $c2);
 		return $this;
 	}
 

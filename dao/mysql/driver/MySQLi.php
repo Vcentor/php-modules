@@ -8,8 +8,9 @@
  */
 
 namespace Dao\Mysql\Driver;
+use mysqli as MySQLiDriver;
 use Dao\Mysql\Database;
-use Dao\Exception\MysqlException;
+use Dao\Mysql\Exception\MysqlException;
 
 class MySQLi extends Database {
 
@@ -31,19 +32,19 @@ class MySQLi extends Database {
 			return;
 		}
 
-		extract($this->_config['connection']) + array(
+		extract($this->_config['connection'] + array(
 			'hostname' => '',
 			'username' => '',
 			'password' => '',
 			'database' => '',
 			'port'     => 3306,
 			'socket'   => '',
-		);
+		));
 
 		unset($this->_config['connection']['username'], $this->_config['connection']['password']);
 
 		try {
-			$this->_connection = new mysqli($hostname, $username, $password, $database, $port, $socket);
+			$this->_connection = new MySQLiDriver($hostname, $username, $password, $database, $port, $socket);
 		} catch (Exception $e) {
 			throw new MysqlException($e->getMessage(), $e->getCode());
 		}
@@ -90,7 +91,7 @@ class MySQLi extends Database {
 		return $status;
 	}
 
-	public function query($type, $sql, $as_object = FALSE) {
+	public function query($type, $sql, $as_one = FALSE) {
 		$this->_connection OR $this->connect();
 
 		if (($result = $this->_connection->query($sql)) === FALSE) {
@@ -100,23 +101,17 @@ class MySQLi extends Database {
 		$last_query = $sql;
 
 		if ($type === Database::SELECT) {
-			$ret = array();
-			if ($as_object === TRUE) {
-				while($rows = $this->_connection->fetch_object()) {
-					$ret[] = $rows;
-				}
-			} elseif (is_string($as_object)) {
-				while ($rows = $this->_connection->fetch_object($as_object)) {
-					$ret[] = $rows;
-				}
+
+			if ($as_one) {
+				return $result->fetch_assoc();
 			} else {
-				return $this->_connection->fetch_all(MYSQLI_ASSOC);
+				return $result->fetch_all(MYSQLI_ASSOC);
 			}
-			return $ret;
+
 		} elseif ($type === Database::INSERT) {
 			return array(
-				'insert_id' 	=> $this->_connection->insert_id;
-				'affected_rows' => $this->_connection->affected_rows;
+				'insert_id' 	=> $this->_connection->insert_id,
+				'affected_rows' => $this->_connection->affected_rows,
 			);
 		} else {
 			return $this->_connection->affected_rows;
@@ -130,7 +125,7 @@ class MySQLi extends Database {
 			throw new MysqlException($this->_connection->error, $this->_connection->errno);
 		}
 
-		return (bool) $this->_connection->query('SET TRANSACTION');
+		return (bool) $this->_connection->query('START TRANSACTION');
 	}
 
 	public function commit() {

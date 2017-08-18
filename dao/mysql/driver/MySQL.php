@@ -67,13 +67,13 @@ class MySQL extends Database {
 		}
 	}
 
-	public function query($type, $sql, $as_object = FALSE) {
+	public function query($type, $sql, $as_one = FALSE) {
 		// Make sure the database is connected
 		$this->_connection OR $this->connect();
 
 		// Set the last query
 		$this->last_query = $sql;
-var_dump($sql);
+
 		if ( ! empty($this->_config['connection']['persistent']) AND $this->_config['connection']['database'] !== self::$_current_database[$this->_connection_id]) {
 			$this->_select_db($this->_config['connection']['database']);
 		}
@@ -85,16 +85,16 @@ var_dump($sql);
 
 		if ($type === Database::SELECT) {
 			$ret = array();
-			if ($as_object === TRUE) {
-				while ($rows = mysql_fetch_object($result)) {
-					$ret[] = $rows;
-				}
+
+			if ($as_one) {
+				$rows = mysql_fetch_assoc($result);
+				return $rows;
 			} else {
 				while ( $rows = mysql_fetch_assoc($result)) {
 					$ret[] = $rows;
 				}
 			}
-
+			
 			return $ret;
 		} elseif ($type === Database::INSERT) {
 			// Return an list of insert id and rows created

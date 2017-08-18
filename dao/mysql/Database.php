@@ -66,15 +66,48 @@ abstract class Database {
 	public static function instance($name = NULL) {
 
 		// load from config file
+		// 1】mysql
 		$config = array(
 		    'default' => array(  
 		        'type'       => 'MySQL',  
 		        'connection' => array(  
 		            'hostname'   => '127.0.0.1:3306',
 		            'database'   => 'test', 
-		            'username'   => 'root',//  
-		            'password'   => '',//  
+		            'username'   => 'root', 
+		            'password'   => '',
 		            'persistent' => FALSE,
+		        ),  
+		        'table_prefix' => '',  
+		        'charset'      => 'utf8', 
+		    ),
+		);
+
+		// 2】mysqli
+		$config = array(
+		    'default' => array(  
+		        'type'       => 'MySQLi',  
+		        'connection' => array(  
+		            'hostname'   => '127.0.0.1',
+		            'port'		 => 3306,
+		            'database'   => 'test', 
+		            'username'   => 'root',
+		            'password'   => '',
+		            'socket'     => '',
+		        ),  
+		        'table_prefix' => '',  
+		        'charset'      => 'utf8', 
+		    ),
+		);
+
+		// 3】pdo
+		$config = array(
+		    'default' => array(  
+		        'type'       => 'PDO',  
+		        'connection' => array(  
+		            'dsn'   		=> 'mysql:host=127.0.0.1;port=3306;dbname=test', 
+		            'username'   	=> 'root',
+		            'password'   	=> '',
+		            'persistent'    => FALSE,
 		        ),  
 		        'table_prefix' => '',  
 		        'charset'      => 'utf8', 

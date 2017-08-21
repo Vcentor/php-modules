@@ -20,6 +20,9 @@ class Query {
 
 	// Quoted query parameters
 	protected $_parameters = array();
+
+	// Return results as associative arrays
+	protected $_as_one = FALSE;
 	
 	/**
 	 * Create a new SQL query of the specified type.
@@ -128,8 +131,8 @@ class Query {
 			$db = Database::instance($db);
 		}
 
-		if ($as_object === NULL) {
-			$as_object = $this->_as_object;
+		if ($as_one === NULL) {
+			$as_one = $this->_as_one;
 		}
 
 		$sql = $this->compile($db);

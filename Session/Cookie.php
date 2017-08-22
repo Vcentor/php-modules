@@ -52,7 +52,7 @@ class Cookie {
 	 */
 	public function expire(int $expire) {
 
-		if ( ! empty($expire)) {
+		if (is_numeric($expire)) {
 			$this->_expire = $expire;
 		}
 

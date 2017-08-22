@@ -50,7 +50,7 @@ class Session implements SessionHandlerInterface {
 				array($this, 'read'),
 				array($this, 'write'),
 				array($this, 'destory'),
-				array($this, 'gc'),
+				array($this, 'gc')
 			);
 			register_shutdown_function("session_write_close");
 		}

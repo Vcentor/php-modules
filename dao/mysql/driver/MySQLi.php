@@ -10,6 +10,7 @@
 namespace Dao\Mysql\Driver;
 use mysqli as MySQLiDriver;
 use Dao\Mysql\Database;
+use Dao\Mysql\Result\Mysqli\MySQLiResult;
 use Dao\Mysql\Exception\MysqlException;
 
 class MySQLi extends Database {
@@ -91,7 +92,7 @@ class MySQLi extends Database {
 		return $status;
 	}
 
-	public function query($type, $sql, $as_one = FALSE) {
+	public function query($type, $sql, $as_object = FALSE, array $params = NULL) {
 		$this->_connection OR $this->connect();
 
 		if (($result = $this->_connection->query($sql)) === FALSE) {
@@ -101,13 +102,8 @@ class MySQLi extends Database {
 		$last_query = $sql;
 
 		if ($type === Database::SELECT) {
-
-			if ($as_one) {
-				return $result->fetch_assoc();
-			} else {
-				return $result->fetch_all(MYSQLI_ASSOC);
-			}
-
+			// Return an iterator of results
+			return new MySQLiResult($result, $sql, $as_object, $params);
 		} elseif ($type === Database::INSERT) {
 			return array(
 				'insert_id' 	=> $this->_connection->insert_id,

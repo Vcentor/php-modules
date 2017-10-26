@@ -8,6 +8,7 @@
  */
 namespace Dao\Mysql\Driver;
 use Dao\Mysql\Database;
+use Dao\Mysql\Result\Mysql\MySQLResult;
 use Dao\Mysql\Exception\MysqlException;
 
 class MySQL extends Database {
@@ -67,7 +68,7 @@ class MySQL extends Database {
 		}
 	}
 
-	public function query($type, $sql, $as_one = FALSE) {
+	public function query($type, $sql, $as_object = FALSE, array $params = NULL) {
 		// Make sure the database is connected
 		$this->_connection OR $this->connect();
 
@@ -84,18 +85,8 @@ class MySQL extends Database {
 		}
 
 		if ($type === Database::SELECT) {
-			$ret = array();
-
-			if ($as_one) {
-				$rows = mysql_fetch_assoc($result);
-				return $rows;
-			} else {
-				while ( $rows = mysql_fetch_assoc($result)) {
-					$ret[] = $rows;
-				}
-			}
-			
-			return $ret;
+			// Return an iterator of results
+			return new MySQLResult($result, $sql, $as_object, $params);
 		} elseif ($type === Database::INSERT) {
 			// Return an list of insert id and rows created
 			return array(

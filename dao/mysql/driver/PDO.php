@@ -11,6 +11,7 @@ namespace Dao\Mysql\Driver;
 use PDO as PDODriver;
 use Dao\Mysql\Database;
 use Dao\Exception\MysqlException;
+use Dao\Mysql\Result\PDO\PDOResult;
 
 class PDO extends Database {
 
@@ -62,7 +63,7 @@ class PDO extends Database {
 		parent::disconnect();
 	}
 
-	public function query($type, $sql, $as_one = FALSE) {
+	public function query($type, $sql, $as_object = FALSE, array $params = NULL) {
 		$this->_connection OR $this->connect();
 
 		try {
@@ -74,14 +75,16 @@ class PDO extends Database {
 		$this->last_query = $sql;
 
 		if ($type === Database::SELECT) {
-
-			$result->setFetchMode(PDODriver::FETCH_ASSOC);
-
-			if ($as_one) {
-				return $result->fetch();
+			if ($as_object === FALSE) {
+				$result->setFetchMode(PDODriver::FETCH_ASSOC);
+			} elseif (is_string($as_object)) {
+				$result->setFetchMode(PDODriver::FETCH_CLASS, $as_object, $params);
+			} else {
+				$result->setFetchMode(PDODriver::FETCH_CLASS, 'stdClass');
 			}
-			return $result->fetchAll();
-
+			$result = $result->fetchAll();
+			// Return an iterator of results
+			return new PDOResult($result, $sql, $as_object, $params);
 		} elseif ($type === Database::INSERT) {
 			return array(
 				'insert_id' 	=> $this->_connection->lastInsertId(),

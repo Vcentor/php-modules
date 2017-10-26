@@ -21,8 +21,11 @@ class Query {
 	// Quoted query parameters
 	protected $_parameters = array();
 
-	// Return results as associative arrays
-	protected $_as_one = FALSE;
+	// Return results as associative arrays or objects
+	protected $_as_object = FALSE;
+
+	// Parameters for __construct when using object results
+	protected $_object_params = array();
 	
 	/**
 	 * Create a new SQL query of the specified type.
@@ -125,19 +128,22 @@ class Query {
 	 * @return 	mixed 		the insert id for INSERT queries
 	 * @return 	integer  	number of affected rows for all other queries
 	 */
-	public function execute($as_one = FALSE, $db = NULL) {
+	public function execute($db = NULL, $as_object = FALSE, $object_params = NULL) {
 
 		if ( ! is_object($db)) {
 			$db = Database::instance($db);
 		}
 
-		if ($as_one === NULL) {
-			$as_one = $this->_as_one;
+		if ($as_object === NULL) {
+			$as_object = $this->_as_object;
 		}
 
+		if ($object_params === NULL) {
+			$object_params = $this->_object_params;
+		}
 		$sql = $this->compile($db);
 
-		$result = $db->query($this->_type, $sql, $as_one);
+		$result = $db->query($this->_type, $sql, $as_object, $object_params);
 
 		return $result;
 	}

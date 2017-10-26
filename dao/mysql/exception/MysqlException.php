@@ -23,4 +23,7 @@ class MysqlException extends Exception {
 
 	// PDO Exception
 	const PDO_ERR			= 50005;
+
+	// mysql result read-only
+	const MYSQL_RESULT_READ_ONLY = 50006;
 }

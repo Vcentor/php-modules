@@ -32,7 +32,7 @@ class MySQLResult extends Result {
 	 * @return boolean
 	 */
 	public function seek($offset) {
-		if ($this->offsetExists($offset) AND mysql_data_seek($result, $offset)) {
+		if ($this->offsetExists($offset) AND mysql_data_seek($this->_result, $offset)) {
 			$this->_current_row = $this->_internal_row = $offset;
 			return TRUE;
 		}

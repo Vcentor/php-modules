@@ -10,7 +10,7 @@
 namespace Dao\Mysql\Result\PDO;
 use Dao\Mysql\Result\Result;
 
-class MySQLResult extends Result {
+class PDOResult extends Result {
 
 	public function __construct($result, $sql, $as_object = FALSE, array $params = NULL) {
 		parent::__construct($result, $sql, $as_object, $params);
@@ -30,7 +30,9 @@ class MySQLResult extends Result {
 	public function seek($offset) {
 		if ($this->offsetExists($offset)) {
 			$this->_current_row = $offset;
+			return TRUE;
 		}
+		return FALSE;
 	}
 
 	/**

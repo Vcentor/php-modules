@@ -28,7 +28,7 @@ abstract class Result implements Countable, Iterator, SeekableIterator, ArrayAcc
 	/**
 	 * @var Return rows as an object or associative array
 	 */
-	protected $_as_object
+	protected $_as_object;
 
 	/**
 	 * @var Parameters for __construct when using object results
@@ -62,7 +62,7 @@ abstract class Result implements Countable, Iterator, SeekableIterator, ArrayAcc
 	 * @return  void
 	 */
 	public function __construct($result, $sql, $as_object = FALSE, array $params = NULL) {
-		$this->_result = $result
+		$this->_result = $result;
 
 		$this->_query = $sql;
 
@@ -192,7 +192,7 @@ abstract class Result implements Countable, Iterator, SeekableIterator, ArrayAcc
 	 * @return mixed
 	 */
 	public function offsetGet($offset) {
-		if ( ! isset($this->seek($offset))) {
+		if ( ! $this->seek($offset)) {
 			return NULL;
 		}
 		return $this->current();

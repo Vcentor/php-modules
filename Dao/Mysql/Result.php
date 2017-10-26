@@ -6,7 +6,7 @@
  * @category result
  * @author 	 vcentor
  */
-namespace Dao\Mysql\Result;
+namespace Dao\Mysql;
 use \Iterator;
 use \Countable;
 use \ArrayAccess;

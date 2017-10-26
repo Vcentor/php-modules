@@ -7,7 +7,7 @@
  * @author 	 vcentor
  */
 namespace Dao\Mysql\Result\Mysqli;
-use Dao\Mysql\Result\Result;
+use Dao\Mysql\Result;
 
 class MySQLiResult extends Result {
 

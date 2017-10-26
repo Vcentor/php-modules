@@ -8,7 +8,7 @@
  */
 
 namespace Dao\Mysql\Result\Mysql;
-use Dao\Mysql\Result\Result;
+use Dao\Mysql\Result;
 
 class MySQLResult extends Result {
 

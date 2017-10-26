@@ -8,7 +8,7 @@
  */
 
 namespace Dao\Mysql\Result\PDO;
-use Dao\Mysql\Result\Result;
+use Dao\Mysql\Result;
 
 class PDOResult extends Result {
 

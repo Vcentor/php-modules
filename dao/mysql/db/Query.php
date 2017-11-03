@@ -122,8 +122,9 @@ class Query {
 	/**
 	 * Execute the current query on the given database.
 	 *
-	 * @param 	boolean 	$as_one 		select result ONE or ALL default ALL
+	 * @param 	boolean 	$as_object		
 	 * @param 	mixed 		$db 			Database instance or name of instance
+	 * @param   array       $object_params
 	 * @return 	array 		select result
 	 * @return 	mixed 		the insert id for INSERT queries
 	 * @return 	integer  	number of affected rows for all other queries

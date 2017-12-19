@@ -100,11 +100,11 @@ class MySQL extends Database {
 	}
 
 
-	public function begin($model = NULL) {
+	public function begin($type='SESSION', $model = NULL) {
 		// Make sure the database is connected
 		$this->_connection OR $this->connect();
 
-		if ($model AND ! mysql_query("SET TRANSACTION ISOLATION LEVEL $model", $this->_connection)) {
+		if ($model AND ! mysql_query("SET $type TRANSACTION ISOLATION LEVEL $model", $this->_connection)) {
 			throw new MysqlException(mysql_error($this->_conection), mysql_errno($this->_connection));
 		}
 

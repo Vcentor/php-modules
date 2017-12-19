@@ -428,10 +428,11 @@ abstract class Database {
      *	      // Insert failed.Rolling back changes...
      *        $db->rollback()
 	 *    }
+     * @param   string $type session|global
 	 * @param 	string $mode transaction mode  READ COMMITTED |  READ UNCOMMITTED | REPEATABLE READ | SERIALIZABLE
 	 * @return 	boolean
 	 */
-	abstract public function begin($model = NULL);
+	abstract public function begin($type='SESSION', $model = NULL);
 
 	/**
 	 * Commit the current transaction

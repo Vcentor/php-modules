@@ -114,10 +114,10 @@ class MySQLi extends Database {
 		}
 	}
 
-	public function begin($mode = NULL) {
+	public function begin($type='SESSION', $mode = NULL) {
 		$this->_connection OR $this->connect();
 
-		if ($mode AND ! $this->_connection->query('SET TRANSACTION ISOLATION LEVEL '.$mode)) {
+		if ($mode AND ! $this->_connection->query('SET '.$type.' TRANSACTION ISOLATION LEVEL '.$mode)) {
 			throw new MysqlException($this->_connection->error, $this->_connection->errno);
 		}
 

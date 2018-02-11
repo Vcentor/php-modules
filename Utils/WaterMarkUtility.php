@@ -31,6 +31,7 @@ class WaterMark {
 	public $path;
 	// 水印透明度
 	public $pct;
+	public $edgeSize;
 
 	/**
 	 * 初始化
@@ -40,13 +41,14 @@ class WaterMark {
 	 * @param string  $path      最后图片保存路径，默认和原始图片同一目录
 	 * @param integer $pct       水印透明度
 	 */
-	public function __construct($oriImg, $pos = 9, $prefix = 'water', $path = '', $pct = 80) {
+	public function __construct($oriImg, $pos = 9, $prefix = 'water', $path = '', $edgeSize = 20, $pct = 80) {
 		$this->check($oriImg);
 		$this->oriImg = $oriImg;
 		$this->pos = $pos;
 		$this->prefix = $prefix;
 		$this->path = $path;
 		$this->pct = $pct;
+		$this->edgeSize = $edgeSize;
 	}
 
 	/**
@@ -205,8 +207,8 @@ class WaterMark {
 				$y = $imgInfo['height'] - $waterInfo['height'];
 				break;
 			case self::IMG_POSITION_BOTTOM_RIGHT:
-				$x = $imgInfo['width'] - $waterInfo['width'];
-				$y = $imgInfo['height'] - $waterInfo['height'];
+				$x = $imgInfo['width'] - $waterInfo['width'] - $this->edgeSize;
+				$y = $imgInfo['height'] - $waterInfo['height'] - $this->edgeSize;
 				break;
 			default:
 				throw new \Exception('Please choice position of image!', 90003);
@@ -238,7 +240,7 @@ class WaterMark {
 }
 
 try {
-	$oriImg = '1.jpg';
+	$oriImg = '3.jpg';
 	$water = new waterMark($oriImg);
 	$water->water('2.jpg');
 } catch (\Exception $e) {

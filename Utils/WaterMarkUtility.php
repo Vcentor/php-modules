@@ -52,7 +52,7 @@ class WaterMark {
 	/**
 	 * 添加图片水印
 	 * @param  string $imgWater 图片水印
-	 * @return
+	 * @return string $destImgName 加水印后的图片地址
 	 */
 	public function water($imgWater) {
 		$this->check($imgWater);
@@ -74,6 +74,7 @@ class WaterMark {
 		$this->save($oriResource, $destImgName);
 		imagedestroy($oriResource);
 		imagedestroy($waterResource);
+		return $destImgName;
 	}
 
 	/**

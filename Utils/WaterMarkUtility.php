@@ -5,7 +5,7 @@
  * @author xieshuai <xieshuai@yoka.com>
  */
 
-class waterMark {
+class WaterMark {
 	// 图片位置
 	const IMG_POSITION_RAND = 0; // 任意位置
 	const IMG_POSITION_TOP_LEFT = 1; // 左上角
@@ -21,6 +21,8 @@ class waterMark {
 	const WATERMARK_TYPE_TTF = 2; // 文字水印
 	// 原始图片
 	public $oriImg;
+	// 最终图片
+	public $destImg;
 	// 添加水印位置
 	protected $pos;
 	// 图片名称前缀
@@ -67,11 +69,19 @@ class waterMark {
 		// 打水印
 		imagecopymerge($oriResource, $waterResource, $pos['x'], $pos['y'], 0, 0, $waterInfo['width'], $waterInfo['height'], $this->pct);
 		// 重新命名
-		$destImgName = $this->makeDestImgName();
+		$this->destImg = $destImgName = $this->makeDestImgName();
 		// 保存
 		$this->save($oriResource, $destImgName);
 		imagedestroy($oriResource);
 		imagedestroy($waterResource);
+	}
+
+	/**
+	 * 获取处理后的图片地址
+	 * @return
+	 */
+	public function getDestImg() {
+		return $this->destImg;
 	}
 
 	/**
@@ -80,7 +90,7 @@ class waterMark {
 	 * @param  string $destImgName  最终图片
 	 * @return
 	 */
-	public function save($resource, $destImgName) {
+	protected function save($resource, $destImgName) {
 		$type = pathinfo($destImgName, PATHINFO_EXTENSION);
 		if ($type = 'jpg') {
 			$type = 'jpeg';
@@ -113,7 +123,7 @@ class waterMark {
 	 * @param  string $img 图片地址
 	 * @return resource
 	 */
-	public function openImg($img) {
+	protected function openImg($img) {
 		$mime = $this->getImgInfo($img)['mime'];
 		switch ($mime) {
 			case 'image/png':
@@ -140,7 +150,7 @@ class waterMark {
 	 * @param  string $img 图片路径
 	 * @return array
 	 */
-	public function getImgInfo($img) {
+	protected function getImgInfo($img) {
 		$imgInfo = array();
 		$result = getimagesize($img);
 		$imgInfo['width'] = $result[0];
